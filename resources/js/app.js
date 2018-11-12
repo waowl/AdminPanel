@@ -9,9 +9,12 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 import Vue from 'vue'
+import { Form, HasError, AlertError } from 'vform'
 import VueRouter from 'vue-router'
 import routes from './routes'
+
 Vue.use(VueRouter)
+window.Form = Form
 
 const router = new VueRouter({
     mode:'history',
@@ -24,7 +27,8 @@ const router = new VueRouter({
  *
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
-
+Vue.component(HasError.name, HasError)
+Vue.component(AlertError.name, AlertError)
 /*
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
 */

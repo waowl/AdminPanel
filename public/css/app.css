@@ -29933,3 +29933,11 @@ readers do not read off random characters that represent icons */
   transition: all .2s ease;
 }
 
+.blue {
+  color: #3490dc;
+}
+
+.red {
+  color: #e3342f;
+}
+

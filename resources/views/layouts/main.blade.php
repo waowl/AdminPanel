@@ -19,7 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <div class="wrapper" id="app">
 
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
+    <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom mb-2">
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">
@@ -55,7 +55,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <!-- Sidebar user panel (optional) -->
             <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                 <div class="image">
-                    <img src="/img/man.png" class="img-circle elevation-2" alt="User Image">
+                    <img src="/img/{{ Auth::user()->photo }}" class="img-circle elevation-2" alt="User Image">
                 </div>
                 <div class="info">
                     <a href="#" class="d-block">{{ Auth::user()->name }}</a>
@@ -88,17 +88,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link active">
-                                    <i class="fa fa-circle-o nav-icon"></i>
-                                    <p>Active Page</p>
-                                </a>
+                                <router-link to="/users" class="nav-link ">
+                                    <i class="fas fa-users nav-icon"></i>
+                                    <p>Users</p>
+                                </router-link>
                             </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="fa fa-circle-o nav-icon"></i>
-                                    <p>Inactive Page</p>
-                                </a>
-                            </li>
+
                         </ul>
                     </li>
                     <li class="nav-item">
