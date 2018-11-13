@@ -8,19 +8,32 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-import Vue from 'vue'
+import {filters} from './utils'
 import { Form, HasError, AlertError } from 'vform'
 import VueRouter from 'vue-router'
 import routes from './routes'
+import swal from 'sweetalert2'
 
 Vue.use(VueRouter)
+
 window.Form = Form
+window.swal = swal
+window.toast = swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000
+});
 
 const router = new VueRouter({
     mode:'history',
     routes
 })
+
+
+
 /**
+ *
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
  * components and automatically register them with their "basename".

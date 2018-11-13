@@ -6,7 +6,7 @@
                     <div class="card-header">
                         <h3 class="card-title">Users</h3>
                         <div class="card-tools">
-                            <button class="btn btn-success" data-toggle="modal" data-target="#addNew">
+                            <button class="btn btn-success" @click="newModal">
                                 <i class="fas fa-user-plus"></i>
                                 Add new
                             </button>
@@ -21,19 +21,22 @@
                                 <th>User</th>
                                 <th>Email</th>
                                 <th>Type</th>
+                                <th>Registered At</th>
                                 <th>Actions</th>
                             </tr>
-                            <tr>
-                                <td>183</td>
-                                <td>John Doe</td>
-                                <td>11-7-2014</td>
-                                <td><span class="tag tag-success">Approved</span></td>
+                            <tr v-for="user in users" :key="user.id">
+                                <td>{{user.id}}</td>
+                                <td>{{user.name}}</td>
+                                <td>{{user.email}}</td>
+                                <td>{{user.type}}</td>
+                                <td>{{user.created_at | prettyDate }}</td>
+
                                 <td>
-                                    <a href="">
+                                    <a href="" @click.prevent="deleteUser(user)">
                                         <i class="fas fa-trash red"></i>
                                     </a> /
-                                    <a href="">
-                                        <i class="fas fa-edit blue"></i>
+                                    <a href="" @click.prevent="editModal(user)">
+                                        <i class="fas fa-edit blue" ></i>
                                     </a>
                                 </td>
                             </tr>
@@ -50,20 +53,21 @@
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Add new user</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle">{{modalOptions.title}}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
+                        <form  @submit.prevent="editMode ? editUser() : addUser()">
+                            <div class="form-group">
 
                             <input v-model="form.name" type="text" name="name"
                                    class="form-control" :class="{ 'is-invalid': form.errors.has('name') }" placeholder="Name">
                             <has-error :form="form" field="name"></has-error>
                         </div>
                         <div class="form-group">
-                            <input v-model="form.email" type="text" name="name"
+                            <input v-model="form.email" type="email" name="email"
                                    class="form-control" :class="{ 'is-invalid': form.errors.has('email') }" placeholder="Email">
                             <has-error :form="form" field="email"></has-error>
                         </div>
@@ -87,10 +91,11 @@
                             </select>
                             <has-error :form="form" field="type"></has-error>
                         </div>
-                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -102,6 +107,12 @@
     export default {
         data () {
             return {
+               modalOptions: {
+                   editMode: false ,
+                   title: ''
+               },
+                users : [],
+                uid: null,
                 form: new Form({
                     name: '',
                     email: '',
@@ -113,5 +124,90 @@
                 })
             }
         },
+        methods: {
+            newModal() {
+                this.modalOptions.editMode = false
+                this.modalOptions.title = 'Add New User'
+                this.openModal()
+
+            },
+            editModal(user) {
+                this.editMode = true
+                this.modalOptions.title = 'Edit User'
+                this.openModal()
+                this.uid = user.id
+                this.form.fill(user)
+            },
+            openModal() {
+                this.form.reset()
+                $('#addNew').modal('show')
+            },
+            sortUsers(users) {
+                        return users.sort((a, b) => {
+                            return a.id - b.id
+                })
+
+            },
+            loadUsers() {
+              axios.get('api/users')
+                  .then(({data})=> {
+                    this.users =  this.sortUsers(data.data)
+                  })
+            },
+            addUser () {
+                this.form.post('api/users')
+                    . then(data=> {
+                        this.users.push(data.data)
+                        $('#addNew').modal('hide')
+                        toast({
+                            type: 'success',
+                            title: 'Created in successfully'
+                        })
+                    } )
+            },
+            editUser() {
+                this.form.put(`api/users/${this.uid}`)
+                    .then((data) => {
+                        this.users = this.users.filter((user) => {
+                            return user.id !== this.uid
+                        })
+                        this.users.push(data.data)
+                        this.sortUsers(this.users)
+                        $('#addNew').modal('hide')
+                        toast({
+                            type: 'success',
+                            title: 'Updated in successfully'
+                        })
+                    })
+            },
+            deleteUser(user) {
+                swal({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.value) {
+                        const position = this.users.indexOf(user)
+                        axios.delete(`api/users/${user.id}`)
+                            .then(({data}) => {
+                                this.users.splice(position, 1)
+                            })
+                        swal(
+                            'Deleted!',
+                            'Your file has been deleted.',
+                            'success'
+                        )
+                    }
+                })
+
+            }
+        },
+        created() {
+            this.loadUsers()
+        }
     }
 </script>
