@@ -22,3 +22,6 @@ Route::apiResources(
         'users' => 'Api\UsersController'
     ]
 );
+
+Route::get('profile', 'Api\UsersController@profile');
+Route::put('profile/{id}', 'Api\UsersController@profileUpdate');
