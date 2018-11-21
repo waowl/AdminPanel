@@ -144,15 +144,11 @@
                         'error'
                     )
                 }
-
-
-
             }
         },
         created() {
             axios.get('api/profile')
                 .then(({data}) => {
-                console.log (data);
                 this.form.fill(data)
             })
         }

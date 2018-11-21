@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" v-if="$gates.isAdmin()">
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -207,7 +207,9 @@
             }
         },
         created() {
-            this.loadUsers()
+            if(this.$gates.isAdmin())
+                this.loadUsers()
+
         }
     }
 </script>

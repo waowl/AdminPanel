@@ -9,11 +9,12 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 import {filters} from './utils'
+import Gates from './utils/Gates'
 import { Form, HasError, AlertError } from 'vform'
 import VueRouter from 'vue-router'
 import routes from './routes'
 import swal from 'sweetalert2'
-
+Vue.prototype.$gates = new Gates(window.user)
 Vue.use(VueRouter)
 
 window.Form = Form
@@ -71,7 +72,6 @@ Vue.component(
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 const app = new Vue({
-
     el: '#app',
     router
 });
